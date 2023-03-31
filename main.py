@@ -1,7 +1,7 @@
 import json
 import os.path
 
-from misaka import MisakaII
+from src.misaka import MisakaII
 
 
 def get_data_from_har(path):
