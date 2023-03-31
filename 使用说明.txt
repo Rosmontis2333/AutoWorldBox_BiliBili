@@ -1,8 +1,0 @@
-①进入任意一个B站直播间
-②按F12,选择“network”或“网络”
-③发送一条弹幕
-④在“network”或“网络”选项卡下方找到“send”，右键，复制为“curl（bash）”或“copy as crul（bash）”
-⑤进入https://curlconverter.com/#json
-⑥在框中粘贴刚复制的curl，再复制下方输出框中所有内容，粘贴进与Misaka Ⅱ同目录的config.json中
-然后再启动程序，否则报错
-默认是发送到呵呵的直播间，要改直播间的话，在程序的文本框中输入房间号，再点击Misaka Ⅱ

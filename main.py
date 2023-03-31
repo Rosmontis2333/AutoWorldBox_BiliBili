@@ -1,189 +1,54 @@
-import sys
-
-from PyQt5.QtWidgets import QApplication, QMainWindow
-import untitled
 import json
+import os.path
+
+from src.misaka import MisakaII
+
+
+def get_data_from_har(path):
+    headers = None
+    cookies = None
+    with open(path, 'r', encoding='utf-8') as f:
+        har_json = json.load(f)
+        for i in har_json["log"]["entries"]:
+            if i["request"]["url"].endswith("msg/send"):
+                headers = {j["name"]: j["value"] for j in i["request"]["headers"]}
+                cookies = {j["name"]: j["value"] for j in i["request"]["cookies"]}
+                break
+    return headers, cookies
+
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    MainWindow = QMainWindow()
-    ui = untitled.Ui_UI_Auto()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    import requests
-    import time
+    if not os.path.exists('config.json'):
+        if not os.path.exists('bilibili.har'):
+            print('uh?你似乎是第一次启动这个程序...')
+            print(
+                '请在发弹幕后选择"将此请求保存为har文件", 然后在以下输入框中输入har文件的路径, 留空则为程序所在目录下的"弹幕.har"')
+            print('如果你不知道如何使用开发者工具, 请自行百度')
+            print('注: 必须先打开开发者工具, 然后再发弹幕,否则无法获取到cookie')
+            text_inp = input('>')
+            if text_inp == '':
+                text_inp = 'bilibili.har'
+            if not os.path.exists(text_inp):
+                print('似乎并没有这个文件呢...')
+                input()
+                exit()
+        else:
+            text_inp = 'bilibili.har'
 
-    with open("config.json") as json_file:
-        config = json.load(json_file)
-    headers = config['headers']
-    cookies = config["cookies"]
-    token = cookies["bili_jct"]
-    code_073 = headers["content-type"].lstrip("multipart/form-data; boundary=----WebKitFormBoundary")
-    thetext = "{thetext}"
-    roomid = "25191145"
-    time = int(time.time())
-    data = f'------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="bubble"\r\n\r\n0\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="msg"\r\n\r\n{thetext}\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="color"\r\n\r\n16777215\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="mode"\r\n\r\n1\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="fontsize"\r\n\r\n25\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="rnd"\r\n\r\n{time}\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="roomid"\r\n\r\n{roomid}\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="csrf"\r\n\r\n{token}\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="csrf_token"\r\n\r\n{token}\r\n------WebKitFormBoundary{code_073}--\r\n'
-    print(code_073)
-    print(token)
-    print(cookies)
-    print(headers)
-    print(time)
+        hds, cks = get_data_from_har(text_inp)
+        if hds is None or cks is None:
+            print('程序找不到所需的信息哦, 再试试吧. ')
+            input()
+            exit()
+        else:
+            print('信息获取成功! 正在保存...')
+            config = {
+                "headers": hds,
+                "cookies": cks
+            }
+            with open('config.json', 'w') as f:
+                json.dump(config, f)
 
-
-
-    def start():
-        global data
-        global cookies
-        global headers
-        target = ui.put_in.text()
-        text = f"加入{target}"
-        data233 = data.format(thetext=text)
-        data_out = data233
-        requests.post('https://api.live.bilibili.com/msg/send', cookies=cookies, headers=headers,
-                      data=data_out.encode('utf-8'))
-        ui.put_in.setText("")
-
-
-    def xuanzhan():
-        global data
-        global cookies
-        global headers
-        target = ui.put_in.text()
-        text = f"宣战{target}"
-        data233 = data.format(thetext=text)
-        data_out = data233.encode("utf-8").decode("latin1")
-        requests.post('https://api.live.bilibili.com/msg/send', cookies=cookies, headers=headers, data=data_out)
-        ui.put_in.setText("")
-
-
-    def attack():
-        global data
-        global cookies
-        global headers
-        target = ui.put_in.text()
-        text = f"进攻{target}"
-        data233 = data.format(thetext=text)
-        data_out = data233.encode("utf-8").decode("latin1")
-        requests.post('https://api.live.bilibili.com/msg/send', cookies=cookies, headers=headers, data=data_out)
-
-
-    def peace():
-        global data
-        global cookies
-        global headers
-        target = ui.put_in.text()
-        text = f"和平{target}"
-        data233 = data.format(thetext=text)
-        data_out = data233.encode("utf-8").decode("latin1")
-        requests.post('https://api.live.bilibili.com/msg/send', cookies=cookies, headers=headers, data=data_out)
-        ui.put_in.setText("")
-
-
-    def army():
-        global data
-        global cookies
-        global headers
-        target = ui.put_in.text()
-        text = f"封将{target}"
-        data233 = data.format(thetext=text)
-        data_out = data233.encode("utf-8").decode("latin1")
-        requests.post('https://api.live.bilibili.com/msg/send', cookies=cookies, headers=headers, data=data_out)
-        ui.put_in.setText("")
-
-
-    def lord():
-        global data
-        global cookies
-        global headers
-        target = ui.put_in.text()
-        text = f"封侯{target}"
-        data233 = data.format(thetext=text)
-        data_out = data233.encode("utf-8").decode("latin1")
-        requests.post('https://api.live.bilibili.com/msg/send', cookies=cookies, headers=headers, data=data_out)
-        ui.put_in.setText("")
-
-
-    def send():
-        global data
-        global cookies
-        global headers
-        target = ui.put_in.text()
-        text = f"{target}"
-        data233 = data.format(thetext=text)
-        data_out = data233.encode("utf-8").decode("latin1")
-        requests.post('https://api.live.bilibili.com/msg/send', cookies=cookies, headers=headers, data=data_out)
-        ui.put_in.setText("")
-
-
-    def help():
-        global data
-        global cookies
-        global headers
-        target = ui.put_in.text()
-        text = f"协助{target}"
-        data233 = data.format(thetext=text)
-        data_out = data233.encode("utf-8").decode("latin1")
-        requests.post('https://api.live.bilibili.com/msg/send', cookies=cookies, headers=headers, data=data_out)
-        ui.put_in.setText("")
-
-
-    def roomid():
-        global code_073
-        global thetext
-        global time
-        global token
-        global data
-        roomid = ui.put_in.text()
-        ui.put_in.setText("")
-        data = f'------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="bubble"\r\n\r\n0\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="msg"\r\n\r\n{thetext}\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="color"\r\n\r\n16777215\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="mode"\r\n\r\n1\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="fontsize"\r\n\r\n25\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="rnd"\r\n\r\n{time}\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="roomid"\r\n\r\n{roomid}\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="csrf"\r\n\r\n{token}\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="csrf_token"\r\n\r\n{token}\r\n------WebKitFormBoundary{code_073}--\r\n'
-
-
-    def count():
-        global code_073
-        global thetext
-        global time
-        global token
-        roomid = "10594572"
-        data = f'------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="bubble"\r\n\r\n0\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="msg"\r\n\r\n{thetext}\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="color"\r\n\r\n16777215\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="mode"\r\n\r\n1\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="fontsize"\r\n\r\n25\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="rnd"\r\n\r\n{time}\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="roomid"\r\n\r\n{roomid}\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="csrf"\r\n\r\n{token}\r\n------WebKitFormBoundary{code_073}\r\nContent-Disposition: form-data; name="csrf_token"\r\n\r\n{token}\r\n------WebKitFormBoundary{code_073}--\r\n'
-        global cookies
-        global headers
-        text = "加入"
-        data233 = data.format(thetext=text)
-        data_out = data233.encode("utf-8").decode("latin1")
-        requests.post('https://api.live.bilibili.com/msg/send', cookies=cookies, headers=headers, data=data_out)
-
-
-    def back():
-        global data
-        global cookies
-        global headers
-        target = ui.put_in.text()
-        text = f"回防"
-        data233 = data.format(thetext=text)
-        data_out = data233.encode("utf-8").decode("latin1")
-        requests.post('https://api.live.bilibili.com/msg/send', cookies=cookies, headers=headers, data=data_out)
-        ui.put_in.setText("")
-
-    def goto():
-        global data
-        global cookies
-        global headers
-        target = ui.put_in.text()
-        text = f"前往{target}"
-        data233 = data.format(thetext=text)
-        data_out = data233.encode("utf-8").decode("latin1")
-        requests.post('https://api.live.bilibili.com/msg/send', cookies=cookies, headers=headers, data=data_out)
-        ui.put_in.setText("")
-count()
-ui.pushButton_2.clicked.connect(roomid)
-ui.pushButton.clicked.connect(start)
-ui.XuanZhan.clicked.connect(xuanzhan)
-ui.Attack.clicked.connect(attack)
-ui.peace.clicked.connect(peace)
-ui.army.clicked.connect(army)
-ui.lord.clicked.connect(lord)
-ui.send.clicked.connect(send)
-ui.Help.clicked.connect(help)
-ui.back.clicked.connect(back)
-ui.goto_2.clicked.connect(goto)
-sys.exit(app.exec_())
+with open("config.json") as json_file:
+    config = json.load(json_file)
+    MisakaII(config)
