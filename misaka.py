@@ -1,7 +1,7 @@
 import sys
 
 from PyQt5.QtWidgets import QApplication, QMainWindow
-import untitled
+import ui
 import requests
 import time
 
@@ -31,8 +31,8 @@ class MisakaII:
         # init the ui
         app = QApplication(sys.argv)
         main_window = QMainWindow()
-        self.ui = untitled.Ui_UI_Auto()
-        self.ui.setupUi(main_window)
+        self.ui = ui.UI()
+        self.ui.setup_ui(main_window)
         main_window.show()
 
         # set the room id
