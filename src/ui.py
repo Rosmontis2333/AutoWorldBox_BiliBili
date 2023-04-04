@@ -23,12 +23,6 @@ class UI:
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setGeometry(QtCore.QRect(110, 14, 161, 31))
         self.pushButton_2.setObjectName("pushButton_2")
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(280, 32, 71, 21))
-        self.label.setObjectName("label")
-        self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(30, 31, 61, 20))
-        self.label_2.setObjectName("label_2")
         self.widget = QtWidgets.QWidget(self.centralwidget)
         self.widget.setGeometry(QtCore.QRect(10, 60, 371, 183))
         self.widget.setObjectName("widget")
@@ -112,8 +106,6 @@ class UI:
     def re_translate_ui(self, ui_auto):
         _translate = QtCore.QCoreApplication.translate
         self.pushButton_2.setText(_translate("UI_Auto", "Misaka Ⅱ"))
-        self.label.setText(_translate("UI_Auto", "Q群799822421"))
-        self.label_2.setText(_translate("UI_Auto", "御坂18456"))
         self.pushButton.setText(_translate("UI_Auto", "加入"))
         self.XuanZhan.setText(_translate("UI_Auto", "宣战"))
         self.Attack.setText(_translate("UI_Auto", "进攻"))
