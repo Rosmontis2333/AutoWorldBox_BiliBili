@@ -16,8 +16,8 @@ class MisakaII:
         self.headers = config['headers']
         self.cookies = config["cookies"]
         self.token = self.cookies["bili_jct"]
-
-        self.code_073 = self.headers["Content-Type"].lstrip("multipart/form-data; boundary=----WebKitFormBoundary")
+        content_type = self.headers.get("Content-Type", self.headers.get("content-type"))
+        self.code_073 = content_type.lstrip("multipart/form-data; boundary=----WebKitFormBoundary")
         self.launch_time = int(time.time())
 
         # init the room id
